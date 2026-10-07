@@ -18,7 +18,7 @@ One destination registry → Home / Today / More / detail
 
 `src/lib/types.ts` defines distinct read condition, AUTO-STATUS lifecycle, AUTO-ESC owner escalation, Product relevance, and trust state types. The public consumer shape is the minimum needed to represent sanitized normalized card semantics: stable ID, title, read state, source, observation time, freshness, evidence references, and non-executing action metadata. It does not copy the private implementation or establish a competing canonical schema.
 
-`src/lib/contracts.ts` contains deterministic presentation helpers and the narrow consumer fixture validator. It uses no hidden clock and does not fetch or persist business state. `src/data/fixtures.ts` contains the synthetic scenario set. `src/App.tsx` projects the single destination registry into responsive navigation and views; CSS chooses the rail at wider widths and bottom navigation at phone widths.
+`src/lib/contracts.ts` contains deterministic presentation helpers and the narrow consumer fixture validator. It uses no hidden clock and does not fetch or persist business state. `src/data/fixtures.ts` contains the stable synthetic record set. `src/data/scenarios.ts` composes seven selectable, isolated prototype profiles; every Home, Today, Browse, and packet projection receives only the active profile. `src/App.tsx` projects the single destination registry into responsive navigation and views; CSS chooses the rail at wider widths and bottom navigation at phone widths.
 
 ## Product hierarchy
 

@@ -89,6 +89,10 @@ button {
 .desktop-rail {
   display: none;
 }
+.mobile-scenario {
+  display: none;
+}
+
 .mobile-header {
   min-height: 68px;
   padding: 0 18px;
@@ -130,6 +134,29 @@ button {
 }
 .theme-button span {
   font-size: 0.85rem;
+}
+
+.scenario-picker {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.scenario-picker select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.scenario-picker select:focus-visible {
+  outline: 3px solid var(--accent-strong);
+  outline-offset: 2px;
 }
 main {
   min-height: calc(100vh - 130px);
@@ -771,6 +798,9 @@ p {
   .mobile-header {
     padding-inline: 24px;
   }
+  .mobile-scenario {
+    display: none;
+  }
   .pulse-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -799,6 +829,16 @@ p {
     margin-left: auto;
   }
 }
+@media (max-width: 799px) {
+  .mobile-scenario {
+    display: block;
+    padding: 10px 16px 0;
+  }
+  .mobile-scenario .scenario-picker select {
+    width: 100%;
+  }
+}
+
 @media (min-width: 800px) {
   .app-shell {
     display: grid;

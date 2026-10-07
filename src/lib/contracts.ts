@@ -1,7 +1,25 @@
-import type { FixtureItem, OwnerSnapshot, OwnerRelevance } from "./types";
+import type {
+  FixtureItem,
+  OwnerSnapshot,
+  OwnerRelevance,
+  SnapshotActionMode,
+  SourceFreshness,
+} from "./types";
 
 export const HOME_EXCEPTION_LIMIT = 3;
 export const HOME_OWNER_LIMIT = 1;
+const sourceFreshnessValues: SourceFreshness[] = ["fresh", "stale", "unknown"];
+const actionModeValues: SnapshotActionMode[] = [
+  "link-only",
+  "read-only",
+  "safe-bounded",
+  "owner-gated",
+];
+
+export function ownerItemCountLabel(count: number): string {
+  if (count === 0) return "Clear";
+  return `${count} owner item${count === 1 ? "" : "s"}`;
+}
 
 export function needsOwner(item: FixtureItem): boolean {
   return (
@@ -83,16 +101,18 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
   for (const card of snapshot.cards) {
     if (ids.has(card.id)) errors.push(`Duplicate card id: ${card.id}`);
     ids.add(card.id);
-    if (!card.source || !card.observedAt || !card.freshness)
+    if (
+      !card.source ||
+      !card.observedAt ||
+      !sourceFreshnessValues.includes(card.freshness)
+    )
       errors.push(`Card ${card.id} is missing provenance or freshness.`);
-    if (card.state === "healthy" && card.freshness !== "Fresh")
+    if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
       );
-    if (card.actionMode === "owner-gated")
-      errors.push(
-        `Card ${card.id} owner-gated metadata does not imply Product escalation.`,
-      );
+    if (!actionModeValues.includes(card.actionMode))
+      errors.push(`Card ${card.id} has unsupported action mode.`);
   }
   return errors;
 }

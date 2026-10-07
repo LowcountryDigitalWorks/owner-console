@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fixtures } from "./data/fixtures";
+import {
+  fixturesForScenario,
+  scenarioProfiles,
+  type ScenarioId,
+} from "./data/scenarios";
 import {
   browseItems,
   businessPulseState,
   hasMoreFx19Exceptions,
   HOME_OWNER_LIMIT,
+  ownerItemCountLabel,
   visibleHomeOwnerItems,
   visibleFx19Exceptions,
 } from "./lib/contracts";
@@ -284,19 +289,21 @@ function PacketDetail({
 }
 
 function Home({
+  items,
   onFxToggle,
   onOwnerToggle,
   showAllOwner,
   showAllFx,
 }: {
+  items: FixtureItem[];
   onFxToggle: () => void;
   onOwnerToggle: () => void;
   showAllOwner: boolean;
   showAllFx: boolean;
 }) {
-  const allOwnerItems = visibleHomeOwnerItems(fixtures, true);
-  const ownerItems = visibleHomeOwnerItems(fixtures, showAllOwner);
-  const nextCommitment = fixtures.find(
+  const allOwnerItems = visibleHomeOwnerItems(items, true);
+  const ownerItems = visibleHomeOwnerItems(items, showAllOwner);
+  const nextCommitment = items.find(
     (item) => item.commitment && item.id !== "external-busy",
   );
   const pulseAreas: FixtureItem["area"][] = [
@@ -326,7 +333,7 @@ function Home({
             <h2 id="now-heading">NOW</h2>
           </div>
           <span className="section-hint">
-            {ownerItems.length ? `${ownerItems.length} owner items` : "Clear"}
+            {ownerItemCountLabel(allOwnerItems.length)}
           </span>
         </div>
         {ownerItems.length === 0 ? (
@@ -434,12 +441,16 @@ function Home({
             "Communications",
             "Marketing",
           ].map((area) => {
-            const matching = fixtures.filter((item) => item.area === area);
+            const matching = items.filter((item) => item.area === area);
             const first = matching[0];
             return (
               <a className="glance-row" href="#today" key={area}>
                 <span>{area}</span>
-                <strong>{first ? first.title : "No new update"}</strong>
+                <strong>
+                  {first
+                    ? `${first.title}${first.trust === "Fresh" ? "" : ` · ${first.trust}`}`
+                    : "No new update"}
+                </strong>
                 <span aria-hidden="true">→</span>
               </a>
             );
@@ -458,20 +469,20 @@ function Home({
           {pulseAreas.map((area) => (
             <article className="pulse-row" key={area}>
               <h3>{area}</h3>
-              <p>{businessPulseState(fixtures, area)}</p>
+              <p>{businessPulseState(items, area)}</p>
             </article>
           ))}
         </div>
       </section>
       <p className="data-boundary">
-        Synthetic fixtures only · No live accounts, business records, or
-        provider data are connected.
+        Synthetic items only · No live accounts, business records, or provider
+        data are connected.
       </p>
     </div>
   );
 }
 
-function Today() {
+function Today({ items }: { items: FixtureItem[] }) {
   const areas: FixtureItem["area"][] = [
     "Agenda",
     "People",
@@ -480,14 +491,15 @@ function Today() {
     "Communications",
     "Marketing",
   ];
-  const active = fixtures.filter((item) => areas.includes(item.area));
+  const labels: Record<string, string> = { People: "People to Contact" };
+  const active = items.filter((item) => areas.includes(item.area));
   return (
     <div className="page-width">
       <header className="page-heading">
         <p className="eyebrow">Wednesday · October 7, 2026</p>
         <h1>Today</h1>
         <p className="muted">
-          Your LDW day, with external availability shown only as busy time.
+          Your LDW day, with external availability shown as busy time only.
         </p>
       </header>
       <div className="today-layout">
@@ -497,39 +509,24 @@ function Today() {
             <span className="section-hint">Local owner view</span>
           </div>
           <div className="agenda-list">
-            <FixtureRow
-              item={fixtures.find((item) => item.id === "meeting-prep")!}
-            />
-            <FixtureRow
-              item={fixtures.find((item) => item.id === "stale-source")!}
-              compact
-            />
-            <article className="fixture-row busy-row">
-              <div className="row-heading">
-                <div>
-                  <p className="eyebrow">External calendar</p>
-                  <h3>Busy block</h3>
-                </div>
-                <span className="trust trust-fresh">Busy only</span>
-              </div>
-              <p>
-                Today · 1:00–2:00 PM. Event title, attendees, and details are
-                intentionally omitted.
-              </p>
-              <p className="source-line">
-                Synthetic external calendar · refreshed 9:00 AM
-              </p>
-            </article>
+            {active
+              .filter((item) => item.area === "Agenda")
+              .map((item) => (
+                <FixtureRow item={item} key={item.id} />
+              ))}
+            {!active.some((item) => item.area === "Agenda") && (
+              <p className="empty-row">No current agenda update.</p>
+            )}
           </div>
           {areas.slice(1).map((area) => {
             const entries = active.filter((item) => item.area === area);
             return (
               <section className="today-group" key={area}>
                 <div className="section-title">
-                  <h2>{area === "People" ? "People to Contact" : area}</h2>
+                  <h2>{labels[area] ?? area}</h2>
                   <span className="section-hint">
                     {entries.length
-                      ? `${entries.length} update${entries.length > 1 ? "s" : ""}`
+                      ? `${entries.length} update${entries.length === 1 ? "" : "s"}`
                       : "Clear"}
                   </span>
                 </div>
@@ -549,17 +546,10 @@ function Today() {
             <p className="eyebrow">Day shape</p>
             <h2>One clear next step</h2>
             <p>
-              Meeting prep is ready. The external calendar contributes busy time
-              only.
+              Meeting preparation and external busy time are shown only when
+              included in the active synthetic profile.
             </p>
             <a href="#home">Return Home →</a>
-          </section>
-          <section className="panel">
-            <p className="eyebrow">Owner follow-up</p>
-            <FixtureRow
-              item={fixtures.find((item) => item.id === "promised-followup")!}
-              compact
-            />
           </section>
         </aside>
       </div>
@@ -567,7 +557,13 @@ function Today() {
   );
 }
 
-function Browse({ destination }: { destination: DestinationId }) {
+function Browse({
+  destination,
+  items,
+}: {
+  destination: DestinationId;
+  items: FixtureItem[];
+}) {
   if (destination === "more")
     return (
       <div className="page-width">
@@ -612,7 +608,7 @@ function Browse({ destination }: { destination: DestinationId }) {
     growth: ["Growth", "Marketing"],
     security: ["Security"],
   };
-  const items = browseItems(fixtures).filter((item) =>
+  const browseRows = browseItems(items).filter((item) =>
     areaFor[destination]?.includes(item.area),
   );
   const title =
@@ -631,7 +627,7 @@ function Browse({ destination }: { destination: DestinationId }) {
       </header>
       <div className="browse-list">
         {destination === "finance" &&
-          fixtures.some(
+          items.some(
             (item) => item.area === "Finance" && item.escalation !== "none",
           ) && (
             <section className="panel">
@@ -642,7 +638,7 @@ function Browse({ destination }: { destination: DestinationId }) {
               </p>
             </section>
           )}
-        {items.map((item) => (
+        {browseRows.map((item) => (
           <FixtureRow item={item} key={item.id} />
         ))}
       </div>
@@ -652,6 +648,11 @@ function Browse({ destination }: { destination: DestinationId }) {
 
 export default function App() {
   const [route, setRoute] = useState(routeFromHash);
+  const [scenario, setScenario] = useState<ScenarioId>("calm");
+  const activeFixtures = useMemo(
+    () => fixturesForScenario(scenario),
+    [scenario],
+  );
   const [showAllFx, setShowAllFx] = useState(false);
   const [showAllOwner, setShowAllOwner] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -668,9 +669,9 @@ export default function App() {
   const item = useMemo(
     () =>
       route.startsWith("packet/")
-        ? fixtures.find((entry) => entry.id === route.slice(7))
+        ? activeFixtures.find((entry) => entry.id === route.slice(7))
         : undefined,
-    [route],
+    [route, activeFixtures],
   );
   const activeDestination = destinations.find(
     (entry) => entry.id === route,
@@ -710,6 +711,26 @@ export default function App() {
 
   const toggleTheme = () =>
     setTheme((value) => (value === "dark" ? "light" : "dark"));
+  const scenarioPicker = (
+    <label className="scenario-picker">
+      <span>Prototype scenario</span>
+      <select
+        value={scenario}
+        onChange={(event) => {
+          setScenario(event.target.value as ScenarioId);
+          setShowAllOwner(false);
+          setShowAllFx(false);
+          window.location.hash = "#home";
+        }}
+      >
+        {scenarioProfiles.map((profile) => (
+          <option key={profile.id} value={profile.id}>
+            {profile.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
   const copySynthetic = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
@@ -765,6 +786,7 @@ export default function App() {
           <span className="rail-status">
             <span aria-hidden="true">●</span> Fixture preview
           </span>
+          {scenarioPicker}
           <button
             type="button"
             className="theme-button"
@@ -794,6 +816,7 @@ export default function App() {
             <span>{theme === "dark" ? "Light" : "Dark"}</span>
           </button>
         </header>
+        <div className="mobile-scenario">{scenarioPicker}</div>
         <main id="main-content" tabIndex={-1}>
           {item ? (
             <PacketDetail
@@ -803,15 +826,19 @@ export default function App() {
             />
           ) : route === "home" ? (
             <Home
+              items={activeFixtures}
               onFxToggle={() => setShowAllFx((value) => !value)}
               onOwnerToggle={() => setShowAllOwner((value) => !value)}
               showAllOwner={showAllOwner}
               showAllFx={showAllFx}
             />
           ) : route === "today" ? (
-            <Today />
+            <Today items={activeFixtures} />
           ) : (
-            <Browse destination={activeDestination ?? "more"} />
+            <Browse
+              destination={activeDestination ?? "more"}
+              items={activeFixtures}
+            />
           )}
           <div className="sr-only" role="status" aria-live="polite">
             {theme === "dark" ? "Dark" : "Light"} appearance selected.

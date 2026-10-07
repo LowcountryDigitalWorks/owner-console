@@ -6,6 +6,9 @@ export type OwnerEscalation =
   "none" | "OWNER_DECISION_REQUIRED" | "OWNER_ACTION_REQUIRED";
 export type TrustState =
   "Fresh" | "Stale" | "Unknown" | "Unavailable" | "Partial";
+export type SourceFreshness = "fresh" | "stale" | "unknown";
+export type SnapshotActionMode =
+  "link-only" | "read-only" | "safe-bounded" | "owner-gated";
 export type DestinationId =
   | "home"
   | "today"
@@ -86,9 +89,9 @@ export interface OwnerSnapshotCard {
   state: ReadCondition;
   source: string;
   observedAt: string;
-  freshness: TrustState;
+  freshness: SourceFreshness;
   evidenceRefs: string[];
-  actionMode: "read-only" | "owner-gated";
+  actionMode: SnapshotActionMode;
 }
 
 export interface OwnerSnapshot {
