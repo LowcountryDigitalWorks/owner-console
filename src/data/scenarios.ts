@@ -15,7 +15,6 @@ export type ScenarioId = (typeof scenarioProfiles)[number]["id"];
 const dailyIds = [
   "meeting-prep",
   "blocked-safe-gm",
-  "blocked-safe-gm",
   "external-busy",
   "promised-followup",
   "deliverable-ready",

@@ -845,6 +845,13 @@ p {
     grid-template-columns: 218px minmax(0, 1fr);
   }
   .desktop-rail {
+    --rail-primary: #f3efe6;
+    --rail-secondary: #c2d0ce;
+    --rail-border: #9db5b0;
+    --rail-focus: #f3efe6;
+    --rail-active-bg: #f3efe6;
+    --rail-active-text: #102a3a;
+
     position: sticky;
     top: 0;
     height: 100vh;
@@ -857,13 +864,14 @@ p {
   .brand-lockup {
     justify-content: flex-start;
     padding: 0 8px 28px;
+    color: var(--rail-primary);
   }
   .brand-lockup > span:last-child {
     display: grid;
     line-height: 1.2;
   }
   .brand-lockup small {
-    color: #c2d0ce;
+    color: var(--rail-secondary);
     font-size: 0.7rem;
     font-weight: 500;
   }
@@ -875,6 +883,24 @@ p {
   .desktop-rail .primary-nav a {
     justify-content: flex-start;
     padding: 0 13px;
+    color: var(--rail-secondary);
+  }
+  .desktop-rail .primary-nav a:hover {
+    color: var(--rail-primary);
+  }
+  .desktop-rail .primary-nav a.active {
+    background: var(--surface-soft);
+    color: var(--rail-primary);
+  }
+  .desktop-rail .primary-nav a.active:hover {
+    color: var(--rail-primary);
+  }
+  :root[data-theme="light"] .desktop-rail .primary-nav a.active {
+    background: var(--rail-active-bg);
+    color: var(--rail-active-text);
+  }
+  :root[data-theme="light"] .desktop-rail .primary-nav a.active:hover {
+    color: var(--rail-active-text);
   }
   .rail-foot {
     display: grid;
@@ -883,17 +909,37 @@ p {
   }
   .rail-status {
     padding: 0 8px;
-    color: #c2d0ce;
+    color: var(--rail-secondary);
     font-size: 0.76rem;
   }
   .rail-status span {
-    color: var(--accent-strong);
+    color: var(--rail-primary);
     margin-right: 6px;
   }
   .desktop-rail .theme-button {
     justify-content: flex-start;
-    color: var(--text);
-    border-color: #46616b;
+    color: var(--rail-primary);
+    border-color: var(--rail-border);
+  }
+  .desktop-rail .theme-button:hover {
+    background: #183744;
+  }
+  .desktop-rail .scenario-picker {
+    color: var(--rail-secondary);
+  }
+  .desktop-rail .scenario-picker select {
+    color-scheme: dark;
+    background: #183744;
+    color: var(--rail-primary);
+    border-color: var(--rail-border);
+  }
+  .desktop-rail .scenario-picker option {
+    background: #183744;
+    color: var(--rail-primary);
+  }
+  .desktop-rail :is(a, button, select):focus-visible {
+    outline: 3px solid var(--rail-focus);
+    outline-offset: 3px;
   }
   .mobile-header,
   .mobile-bottom-nav {
