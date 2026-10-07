@@ -1,0 +1,10 @@
+{
+  "name": "Owner Console",
+  "short_name": "Owner Console",
+  "description": "A fixture-only responsive shell for Lowcountry Digital Works.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#102a3a",
+  "theme_color": "#102a3a",
+  "icons": []
+}
