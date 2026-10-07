@@ -1,0 +1,45 @@
+name: Owner Console checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: owner-console-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Typecheck, contract tests, formatting, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Contract and fixture tests
+        run: npm test
+      - name: Formatting check
+        run: npm run format:check
+      - name: Production build
+        run: npm run build
+
+  secret-scan:
+    name: LDW secret scan
+    uses: LowcountryDigitalWorks/.github/.github/workflows/security-secrets.yml@86e5b7f40707c469f4448011b9f0ae605c816341
