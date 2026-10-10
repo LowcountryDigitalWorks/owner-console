@@ -1,0 +1,15 @@
+name: Owner Console CodeQL
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  codeql:
+    permissions:
+      contents: read
+      security-events: write
+    uses: LowcountryDigitalWorks/.github/.github/workflows/security-codeql-js.yml@d8a2f4ed8a7a56b996c2e6c99cdde9fcf39bb744
