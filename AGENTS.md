@@ -4,7 +4,9 @@
 
 - The public GitHub repository is the implementation source of truth. Check live `main`, open issues, open pull requests, workflows, and local `git status` before substantive work.
 - Release 0.1 is limited to the public Owner Console shell and typed fixture consumer. Governance lineage is business-operations #300 and #467; accepted renderer-neutral read model is #362 / PR #472.
-- Do not expand this repository into a service, backend, auth system, provider collector, database, action engine, deployment, or production console.
+- Under owner-console issue #3 only, Release 0.2 may add repository support for a synthetic-fixture-only static deployment proof. The intended Worker is `owner-console-02`, built from `dist/` and reachable only on its `workers.dev` proof route. This narrow support does not create standing deployment authority.
+- Cloudflare Access is the provider-side authentication boundary. The proof route must be gated by owner-only Access before it is treated as private; do not add custom application authentication. Repository configuration neither performs nor authorizes provider/account changes or deployment. Those actions and provider rollback remain separately governed by issue #3; repository rollback is a Git revert.
+- Do not expand this repository into a service, backend, custom auth system, provider collector, database, action engine, custom hostname/route, or production console.
 
 ## Data and product invariants
 

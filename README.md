@@ -2,6 +2,10 @@
 
 A dark-first, responsive shell for a future Lowcountry Digital Works owner workspace. Release 0.1 is a **fixture-only, non-production prototype**: all displayed business state is synthetic, no provider is connected, and no production action can be executed.
 
+## Release 0.2 deployment proof support
+
+Under [owner-console issue #3](https://github.com/LowcountryDigitalWorks/owner-console/issues/3), repository support is limited to a static proof using synthetic fixtures. See [OC-002 static deployment proof](docs/oc-002-static-deployment.md). Cloudflare Access must enforce owner-only access before the `workers.dev` proof route is treated as private. Repository configuration does not deploy or authorize provider/account changes.
+
 ## Start locally
 
 Requires Node.js 22 or newer and npm.
