@@ -125,7 +125,9 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
     if (!readConditionValues.includes(card.state))
       errors.push(`Card ${card.id} has unsupported state.`);
     if (!isIsoInstant(card.observedAt))
-      errors.push(`Card ${card.id} observation time must be an ISO-8601 instant.`);
+      errors.push(
+        `Card ${card.id} observation time must be an ISO-8601 instant.`,
+      );
     if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
