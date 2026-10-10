@@ -9,8 +9,7 @@ import type {
 
 export const HOME_EXCEPTION_LIMIT = 3;
 export const HOME_OWNER_LIMIT = 1;
-const isoInstantPattern =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+const isoInstantPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const readConditionValues: ReadCondition[] = [
   "healthy",
   "attention",
@@ -27,10 +26,7 @@ const actionModeValues: SnapshotActionMode[] = [
 ];
 
 function isIsoInstant(value: unknown): boolean {
-  if (
-    typeof value !== "string" ||
-    !isoInstantPattern.test(value.trim())
-  )
+  if (typeof value !== "string" || !isoInstantPattern.test(value.trim()))
     return false;
   return Number.isFinite(Date.parse(value));
 }
