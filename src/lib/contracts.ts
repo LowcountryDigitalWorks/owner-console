@@ -9,6 +9,8 @@ import type {
 
 export const HOME_EXCEPTION_LIMIT = 3;
 export const HOME_OWNER_LIMIT = 1;
+const isoInstantPattern =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const readConditionValues: ReadCondition[] = [
   "healthy",
   "attention",
@@ -23,6 +25,12 @@ const actionModeValues: SnapshotActionMode[] = [
   "safe-bounded",
   "owner-gated",
 ];
+
+function isIsoInstant(value: unknown): boolean {
+  if (typeof value !== "string" || !isoInstantPattern.test(value.trim()))
+    return false;
+  return Number.isFinite(Date.parse(value));
+}
 
 export function ownerItemCountLabel(count: number): string {
   if (count === 0) return "Clear";
@@ -103,8 +111,8 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
   const errors: string[] = [];
   if (snapshot.contract !== "ldw.owner-snapshot.v1")
     errors.push("Unsupported contract identifier.");
-  if (!snapshot.evaluatedAt || Number.isNaN(Date.parse(snapshot.evaluatedAt)))
-    errors.push("Evaluation time must be explicit and parseable.");
+  if (!isIsoInstant(snapshot.evaluatedAt))
+    errors.push("Evaluation time must be an explicit ISO-8601 instant.");
   const ids = new Set<string>();
   for (const card of snapshot.cards) {
     if (ids.has(card.id)) errors.push(`Duplicate card id: ${card.id}`);
@@ -117,8 +125,8 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
       errors.push(`Card ${card.id} is missing provenance or freshness.`);
     if (!readConditionValues.includes(card.state))
       errors.push(`Card ${card.id} has unsupported state.`);
-    if (card.observedAt && Number.isNaN(Date.parse(card.observedAt)))
-      errors.push(`Card ${card.id} observation time must be parseable.`);
+    if (!isIsoInstant(card.observedAt))
+      errors.push(`Card ${card.id} observation time must be an ISO-8601 instant.`);
     if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
