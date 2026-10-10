@@ -2,12 +2,20 @@ import type {
   FixtureItem,
   OwnerSnapshot,
   OwnerRelevance,
+  ReadCondition,
   SnapshotActionMode,
   SourceFreshness,
 } from "./types";
 
 export const HOME_EXCEPTION_LIMIT = 3;
 export const HOME_OWNER_LIMIT = 1;
+const readConditionValues: ReadCondition[] = [
+  "healthy",
+  "attention",
+  "blocked",
+  "waiting",
+  "unknown",
+];
 const sourceFreshnessValues: SourceFreshness[] = ["fresh", "stale", "unknown"];
 const actionModeValues: SnapshotActionMode[] = [
   "link-only",
@@ -107,6 +115,10 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
       !sourceFreshnessValues.includes(card.freshness)
     )
       errors.push(`Card ${card.id} is missing provenance or freshness.`);
+    if (!readConditionValues.includes(card.state))
+      errors.push(`Card ${card.id} has unsupported state.`);
+    if (card.observedAt && Number.isNaN(Date.parse(card.observedAt)))
+      errors.push(`Card ${card.id} observation time must be parseable.`);
     if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
