@@ -27,7 +27,10 @@ const actionModeValues: SnapshotActionMode[] = [
 ];
 
 function isIsoInstant(value: unknown): boolean {
-  if (typeof value !== "string" || !isoInstantPattern.test(value.trim()))
+  if (
+    typeof value !== "string" ||
+    !isoInstantPattern.test(value.trim())
+  )
     return false;
   return Number.isFinite(Date.parse(value));
 }
