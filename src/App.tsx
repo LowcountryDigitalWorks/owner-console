@@ -57,13 +57,22 @@ function SourceLine({ item }: { item: FixtureItem }) {
     <p className="source-line">
       <span>{item.source}</span>
       <span aria-hidden="true">·</span>
-      <time dateTime={item.observedAt}>
-        {new Date(item.observedAt).toLocaleString("en-US", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}
-      </time>
+      {item.observedAt ? (
+        <time dateTime={item.observedAt}>
+          {new Date(item.observedAt).toLocaleString("en-US", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
+        </time>
+      ) : (
+        <span>Observation time unknown</span>
+      )}
       <TrustLabel state={item.trust} />
+      {item.deepLink && (
+        <a href={item.deepLink} target="_blank" rel="noreferrer">
+          Source
+        </a>
+      )}
     </p>
   );
 }
@@ -162,12 +171,16 @@ function PacketDetail({
       <div className="detail-meta">
         <TrustLabel state={item.trust} />
         <span>{item.source}</span>
-        <time dateTime={item.observedAt}>
-          {new Date(item.observedAt).toLocaleString("en-US", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </time>
+        {item.observedAt ? (
+          <time dateTime={item.observedAt}>
+            {new Date(item.observedAt).toLocaleString("en-US", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </time>
+        ) : (
+          <span>Observation time unknown</span>
+        )}
       </div>
       <p className="detail-intro">{item.summary}</p>
       {packet ? (
