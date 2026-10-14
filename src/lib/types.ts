@@ -74,10 +74,16 @@ export interface FixtureItem {
   escalation: OwnerEscalation;
   trust: TrustState;
   source: string;
-  observedAt: string;
+  observedAt: string | null;
   nextStep?: string;
   commitment?: string;
   provider?: string;
+  sourceSystem?: string;
+  authorityRef?: string;
+  evidenceRefs?: string[];
+  deepLink?: string;
+  actionMode?: SnapshotActionMode;
+  dataClassification?: "internal-sanitized";
   packet?: Packet;
   relatedExceptions?: string[];
   evidence?: Evidence[];
@@ -88,7 +94,7 @@ export interface OwnerSnapshotCard {
   title: string;
   state: ReadCondition;
   source: string;
-  observedAt: string;
+  observedAt: string | null;
   freshness: SourceFreshness;
   evidenceRefs: string[];
   actionMode: SnapshotActionMode;

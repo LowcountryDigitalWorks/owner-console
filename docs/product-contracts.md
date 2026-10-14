@@ -17,6 +17,8 @@ A state in one row does not automatically create a value in another. In particul
 
 `OwnerSnapshot` and `OwnerSnapshotCard` are small public TypeScript consumer interfaces. They are not copied private schema and do not replace the canonical #362 contract. The consumer preserves raw source freshness separately from Product trust and accepts `link-only`, `read-only`, `safe-bounded`, and `owner-gated` action metadata. Action mode is descriptive metadata; no action mode creates Product escalation. Validation rejects duplicate IDs, missing provenance, unsupported values, and healthy state paired with stale or unknown source freshness.
 
+The OC-003 presentation adapter consumes the accepted nested `ldw.owner-snapshot.v1` envelope and selects only `portfolio-workstream-counts` and `portfolio-material-exceptions`. It preserves source system, authority reference, evidence references, deep link, action mode, classification, freshness, and nullable observation time while assigning Product relevance and escalation independently. A null observation time remains visibly unknown; it is never replaced with evaluation or build time.
+
 ## Trust behavior
 
 Fresh, Stale, Unknown, Unavailable, and Partial are rendered as text with a visual marker. Healthy/quiet is allowed only when source freshness is fresh. Unknown, unavailable, stale, and partial states remain visible and include source context. No balance, count, or status is fabricated when source data is missing. Provenance is reachable on Home cards and detail views.

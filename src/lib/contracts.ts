@@ -119,16 +119,18 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
     ids.add(card.id);
     if (
       !card.source ||
-      !card.observedAt ||
-      !sourceFreshnessValues.includes(card.freshness)
+      !sourceFreshnessValues.includes(card.freshness) ||
+      (card.freshness !== "unknown" && !card.observedAt)
     )
       errors.push(`Card ${card.id} is missing provenance or freshness.`);
     if (!readConditionValues.includes(card.state))
       errors.push(`Card ${card.id} has unsupported state.`);
-    if (!isIsoInstant(card.observedAt))
+    if (card.observedAt !== null && !isIsoInstant(card.observedAt))
       errors.push(
         `Card ${card.id} observation time must be an ISO-8601 instant.`,
       );
+    if (card.freshness !== "unknown" && card.observedAt === null)
+      errors.push(`Card ${card.id} requires observation time for ${card.freshness} evidence.`);
     if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
