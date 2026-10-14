@@ -130,7 +130,9 @@ export function validateSnapshot(snapshot: OwnerSnapshot): string[] {
         `Card ${card.id} observation time must be an ISO-8601 instant.`,
       );
     if (card.freshness !== "unknown" && card.observedAt === null)
-      errors.push(`Card ${card.id} requires observation time for ${card.freshness} evidence.`);
+      errors.push(
+        `Card ${card.id} requires observation time for ${card.freshness} evidence.`,
+      );
     if (card.state === "healthy" && card.freshness !== "fresh")
       errors.push(
         `Card ${card.id} cannot be healthy when evidence is ${card.freshness}.`,
