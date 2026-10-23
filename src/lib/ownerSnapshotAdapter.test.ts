@@ -16,9 +16,13 @@ describe("accepted owner snapshot presentation adapter", () => {
       condition: "healthy",
       trust: "Fresh",
       sourceSystem: "Synthetic Control Tower",
+      snapshotGeneratedAt: ownerSnapshotFixture.generated_at,
       actionMode: "read-only",
       dataClassification: "internal-sanitized",
     });
+    expect(items[0]!.source).toContain(
+      `Snapshot generated ${ownerSnapshotFixture.generated_at}`,
+    );
   });
 
   it("preserves unknown evidence without manufacturing an observation time", () => {
@@ -30,6 +34,8 @@ describe("accepted owner snapshot presentation adapter", () => {
 
     const item = adaptOwnerSnapshot(snapshot)[0]!;
     expect(item.observedAt).toBeNull();
+    expect(item.snapshotGeneratedAt).toBe(snapshot.generated_at);
+    expect(item.source).toContain(`Snapshot generated ${snapshot.generated_at}`);
     expect(item.condition).toBe("unknown");
     expect(item.trust).toBe("Unknown");
   });
