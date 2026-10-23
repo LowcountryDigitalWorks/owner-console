@@ -75,6 +75,7 @@ export interface FixtureItem {
   trust: TrustState;
   source: string;
   observedAt: string | null;
+  snapshotGeneratedAt?: string;
   nextStep?: string;
   commitment?: string;
   provider?: string;
