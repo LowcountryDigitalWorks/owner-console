@@ -35,7 +35,9 @@ describe("accepted owner snapshot presentation adapter", () => {
     const item = adaptOwnerSnapshot(snapshot)[0]!;
     expect(item.observedAt).toBeNull();
     expect(item.snapshotGeneratedAt).toBe(snapshot.generated_at);
-    expect(item.source).toContain(`Snapshot generated ${snapshot.generated_at}`);
+    expect(item.source).toContain(
+      `Snapshot generated ${snapshot.generated_at}`,
+    );
     expect(item.condition).toBe("unknown");
     expect(item.trust).toBe("Unknown");
   });
