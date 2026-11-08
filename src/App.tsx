@@ -664,6 +664,7 @@ export default function App() {
       return "dark";
     }
   });
+  const primaryNavScrollPending = useRef(false);
   const lastFocus = useRef<string | null>(null);
   const returnRoute = useRef("home");
   const item = useMemo(
@@ -691,6 +692,12 @@ export default function App() {
       lastFocus.current = null;
     } else document.querySelector<HTMLElement>("main h1")?.focus();
   }, [route, item]);
+  useEffect(() => {
+    if (!primaryNavScrollPending.current) return;
+    primaryNavScrollPending.current = false;
+    // Run after the new page and heading-focus effect have committed.
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [route]);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     try {
@@ -747,6 +754,18 @@ export default function App() {
             className={activeDestination === entry.id ? "active" : ""}
             aria-current={activeDestination === entry.id ? "page" : undefined}
             href={`#${entry.id}`}
+            onClick={(event) => {
+              const modifiedClick =
+                event.button !== 0 ||
+                event.metaKey ||
+                event.ctrlKey ||
+                event.altKey ||
+                event.shiftKey;
+              if (modifiedClick) return;
+              // A repeat tap has no hashchange; scroll immediately on every tap.
+              primaryNavScrollPending.current = entry.id !== route;
+              window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+            }}
             key={entry.id}
           >
             {entry.label}
