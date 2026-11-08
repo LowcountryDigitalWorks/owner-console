@@ -755,13 +755,13 @@ export default function App() {
             aria-current={activeDestination === entry.id ? "page" : undefined}
             href={`#${entry.id}`}
             onClick={(event) => {
-              if (
+              const modifiedClick =
                 event.button !== 0 ||
                 event.metaKey ||
                 event.ctrlKey ||
                 event.altKey ||
-                event.shiftKey
-              ) return;
+                event.shiftKey;
+              if (modifiedClick) return;
               // A repeat tap has no hashchange; scroll immediately on every tap.
               primaryNavScrollPending.current = entry.id !== route;
               window.scrollTo({ top: 0, left: 0, behavior: "instant" });
