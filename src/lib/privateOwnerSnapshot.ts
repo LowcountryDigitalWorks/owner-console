@@ -130,6 +130,7 @@ export function parsePrivateOwnerSnapshot(
   )
     invalid();
 
+  const summary = value.summary;
   const counts: Record<ReadCondition, number> = {
     healthy: 0,
     attention: 0,
@@ -231,9 +232,9 @@ export function parsePrivateOwnerSnapshot(
   }
 
   if (
-    value.summary.total_cards !== seen.size ||
-    value.summary.stale_sources !== stale ||
-    states.some((state) => value.summary[state] !== counts[state])
+    summary.total_cards !== seen.size ||
+    summary.stale_sources !== stale ||
+    states.some((state) => summary[state] !== counts[state])
   )
     invalid();
 

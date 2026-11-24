@@ -11,7 +11,7 @@ import "./styles.css";
 type ViewState =
   | { kind: "loading" }
   | { kind: "unavailable" }
-  | { kind: "ready"; snapshot: PrivateOwnerSnapshot };
+  | { kind: "ready"; snapshot: PrivateOwnerSnapshot; requestId: number };
 
 /** Explicit private proof mode. Never fall back to a synthetic scenario. */
 export default function PrivateSnapshotView() {
@@ -48,7 +48,7 @@ export default function PrivateSnapshotView() {
           if (run !== generation || request.signal.aborted) return;
           pending = null;
           setNow(Date.now());
-          setState({ kind: "ready", snapshot });
+          setState({ kind: "ready", snapshot, requestId: run });
         })
         .catch(() => {
           if (run !== generation || request.signal.aborted) return;
@@ -135,7 +135,11 @@ export default function PrivateSnapshotView() {
         </p>
       )}
       {state.kind === "ready" && (
-        <section ref={content} className="section-block">
+        <section
+          key={state.requestId}
+          ref={content}
+          className="section-block"
+        >
           <h2>Operational evidence</h2>
           <p>
             Snapshot generated:{" "}
@@ -179,7 +183,9 @@ export default function PrivateSnapshotView() {
                 <details>
                   <summary>Evidence references</summary>
                   <ul>
-                    {item.evidenceRefs?.map((ref) => <li key={ref}>{ref}</li>)}
+                    {item.evidenceRefs?.map((ref) => (
+                      <li key={ref}>{ref}</li>
+                    ))}
                   </ul>
                 </details>
               </article>
