@@ -6,3 +6,6 @@
   Permissions-Policy: accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), payment=(), usb=()
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: no-cache
+
+/owner-snapshot.json
+  Cache-Control: private, no-store, max-age=0

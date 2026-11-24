@@ -1,4 +1,6 @@
 import { fixtures } from "./fixtures";
+import { ownerSnapshotFixture } from "./ownerSnapshotFixture";
+import { adaptOwnerSnapshot } from "../lib/ownerSnapshotAdapter";
 import type { FixtureItem } from "../lib/types";
 
 export const scenarioProfiles = [
@@ -43,5 +45,8 @@ const profileIds: Record<ScenarioId, string[]> = {
 
 export function fixturesForScenario(id: ScenarioId): FixtureItem[] {
   const selected = new Set(profileIds[id]);
-  return fixtures.filter((item) => selected.has(item.id));
+  return [
+    ...adaptOwnerSnapshot(ownerSnapshotFixture),
+    ...fixtures.filter((item) => selected.has(item.id)),
+  ];
 }
